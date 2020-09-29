@@ -22,8 +22,8 @@ def home():
     f"/api/v1.0/stations<br/>"
     f"/api/v1.0/tobs<br/>"
     f"For the opperations below please use date format yyyy-mm-dd</br>"
-    f"/api/v1.0/<'start'><br/>"
-    f"/api/v1.0/<'start'><'end'>"
+    f"/api/v1.0/start<br/>"
+    f"/api/v1.0/start/end<br/>"
 )
 
 @app.route("/api/v1.0/precipitation")
@@ -60,8 +60,8 @@ def tobs():
     annual_tobs = list(np.ravel(results))
     return jsonify(annual_tobs)
 
-@app.route("/api/v1.0/<'start'>")
-def start_here(start):
+@app.route("/api/v1.0/start")
+def start_vaca(start):
     session = Session(engine)
     input_date = dt.datetime.strptime(start, '%y-%m-%d')
     start_date = session.query(func.min(Measurement.tobs), func.avg(Measurement.tobs), func.max(Measurement.tobs)).\
@@ -69,6 +69,16 @@ def start_here(start):
     session.close
     vaca_start = list(np.ravel(start_date))
     return jsonify(vaca_start)
+
+@app.route("/api/v1.0/start/end")
+def vaca_start_end(start, end):
+    session = Session(engine)
+    input_start = dt.datetime.strptime(start, '%y-%m-%d')
+    input_end = dt.datetime.strptime(end, '%y-%m-%d')
+    vaca_length = session.query(func.min(Measurement.tobs), func.avg(Measurement.tobs), func.max(Measurement.tobs)).\
+        filter(Measurement.date >= input_start).filter(Measurement.date <= input_end).all()
+    all_days = list(np.ravel(vaca_length))
+    return jsonify(all_days)
 
 if __name__ == "__main__":
     app.run(debug=True)
