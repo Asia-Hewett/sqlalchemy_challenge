@@ -60,6 +60,16 @@ def tobs():
     annual_tobs = list(np.ravel(results))
     return jsonify(annual_tobs)
 
+@app.route("/api/v1.0/<'start'>")
+def start_here(start):
+    session = Session(engine)
+    input_date = dt.datetime.strptime(start, '%y-%m-%d')
+    start_date = session.query(func.min(Measurement.tobs), func.avg(Measurement.tobs), func.max(Measurement.tobs)).\
+        filter(Measurement.date >= input_date).all()
+    session.close
+    vaca_start = list(np.ravel(start_date))
+    return jsonify(vaca_start)
+
 if __name__ == "__main__":
     app.run(debug=True)
 
