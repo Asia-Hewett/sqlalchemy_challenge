@@ -4,9 +4,9 @@ import sqlalchemy
 from sqlalchemy.ext.automap import automap_base
 from sqlalchemy.orm import Session
 from sqlalchemy import create_engine, func, inspect
-from flask import Flaskm jsonify
+from flask import Flask, jsonify
 
-engine = create_enging("sqlite:///hawaii.sqlite", echo=False)
+engine = create_engine("sqlite:///hawaii.sqlite", echo=False)
 Base = automap_base()
 Base.prepare(engine, reflect=True)
 Measurement = Base.classes.measurement
